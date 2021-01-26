@@ -5,6 +5,7 @@ public class Game2048 extends Game {
     private static final int SIDE = 4;
     private int[][] gameField = new int[SIDE][SIDE];
     private boolean isGameStopped = false;
+    private int score = 0;
 
     @Override
     public void initialize(){
@@ -14,8 +15,12 @@ public class Game2048 extends Game {
     }
 
     private void createGame(){
+        gameField = new int[SIDE][SIDE];
+        score = 0;
+        setScore(score);
         createNewNumber();
         createNewNumber();
+
     }
 
     private void drawScene(){
@@ -86,6 +91,8 @@ public class Game2048 extends Game {
         for(int i = 0; i < row.length - 1; i++){
             if(row[i] != 0 && row[i] == row[i + 1]){
                 row[i] += row[i + 1];
+                score += row[i];
+                setScore(score);
                 row[i + 1] = 0;
                 result = true;
             }
@@ -94,36 +101,31 @@ public class Game2048 extends Game {
     }
 
     @Override
-    public void onKeyPress(Key key){
+    public void onKeyPress(Key key) {
         if (key == Key.SPACE) {
-            if(isGameStopped){
+            if (isGameStopped) {
                 isGameStopped = false;
                 createGame();
                 drawScene();
             }
-        }
-
-        if(!canUserMove()){
-            gameOver();
-            return;
-        }
-
-        if( key == Key.LEFT) {
-            moveLeft();
-        }
-        else if(key == Key.RIGHT) {
-            moveRight();
-        }
-        else if(key == Key.UP) {
-            moveUp();
-        }
-        else if(key == Key.DOWN){
-            moveDown();
-        } else{
-            return;
-        }
-        drawScene();
+        } else if (canUserMove()) {
+            if (!isGameStopped) {
+                if (key == Key.UP) {
+                    moveUp();
+                } else if (key == Key.RIGHT) {
+                    moveRight();
+                } else if (key == Key.DOWN) {
+                    moveDown();
+                } else if (key == Key.LEFT) {
+                    moveLeft();
+                } else {
+                    return;
+                }
+                drawScene();
+            }
+        } else gameOver();
     }
+
 
     private void moveLeft(){
         boolean isNewNumberNeeded = false;
